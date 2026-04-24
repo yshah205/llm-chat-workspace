@@ -1,0 +1,28 @@
+{
+  "name": "yugindividualiteration",
+  "version": "1.0.0",
+  "description": "Individual iteration project: multi-LLM response app",
+  "main": "src/app.js",
+  "scripts": {
+    "dev": "nodemon src/app.js",
+    "start": "node src/app.js",
+    "test:unit": "jasmine",
+    "test:acceptance": "USE_MOCK_PROVIDERS=true cucumber-js --exit",
+    "test:puppeteer": "USE_MOCK_PROVIDERS=true node scripts/puppeteer-smoke.js",
+    "test": "npm run test:unit && npm run test:acceptance"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mysql2": "^3.22.2"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^12.8.1",
+    "jasmine": "^6.2.0",
+    "nodemon": "^3.1.14",
+    "puppeteer": "^24.42.0"
+  }
+}
