@@ -1,14 +1,20 @@
-# Yug Individual Iteration
+# LLM Chat Workspace
 
-This project demonstrates a local chat workspace with multi-turn conversations, two parallel conversation windows, and Ollama-backed assistant responses.
+A local chat workspace for talking to LLMs through [Ollama](https://ollama.com/) — with **two parallel conversation windows**, so you can send the same prompt to multiple models and compare their responses side by side. Conversations are multi-turn and persist to MySQL.
+
+## Features
+
+- **Multi-model comparison** — run two chat windows in parallel against different Ollama models
+- **Multi-turn conversations** — full thread history sent as context on each turn
+- **Persistence** — threads and messages stored in MySQL, including provider and response-latency metadata
+- **Mock-provider mode** — develop and run tests without a live Ollama instance (`USE_MOCK_PROVIDERS=true`)
 
 ## Tech Stack
 
-- Node.js + Express
-- Vanilla HTML/CSS/JS frontend
-- Jasmine (unit tests)
-- Cucumber.js (acceptance tests)
-- Puppeteer (browser automation)
+- **Backend:** Node.js + Express
+- **Frontend:** Vanilla HTML/CSS/JS
+- **Database:** MySQL
+- **Testing:** Jasmine (unit), Cucumber.js (acceptance), Puppeteer (browser automation)
 
 ## Setup
 
@@ -18,7 +24,7 @@ This project demonstrates a local chat workspace with multi-turn conversations, 
 npm install
 ```
 
-2. Create/edit `.env` in the project root with values like:
+2. Create/edit `.env` in the project root:
 
 ```bash
 PORT=3011
@@ -32,7 +38,7 @@ OLLAMA_TIMEOUT_MS=10000
 USE_MOCK_PROVIDERS=false
 ```
 
-3. Create/update database schema:
+3. Create the database schema:
 
 ```bash
 mysql -u devuser -p llm_site < sql/schema.sql
@@ -40,80 +46,32 @@ mysql -u devuser -p llm_site < sql/schema.sql
 
 ## Run
 
-Ensure Ollama service is running:
+Ensure the Ollama service is running:
 
 ```bash
 ollama serve
 ```
 
-In another terminal, run the app:
+In another terminal, start the app:
 
 ```bash
 npm run dev
 ```
 
-Open: <http://localhost:3011>
+Open <http://localhost:3011>
 
 ## Tests
 
-### Unit tests (Jasmine)
-
 ```bash
-npm run test:unit
+npm run test:unit        # Jasmine unit tests
+npm run test:acceptance  # Cucumber.js acceptance tests
+npm run test:puppeteer   # Puppeteer browser automation
 ```
 
-### Acceptance tests (Cucumber.js)
+Acceptance tests are derived from user-facing use cases (see `features/`), and the suite can run fully offline using mock providers.
 
-```bash
-npm run test:acceptance
-```
+## Database Schema
 
-### Browser test (Puppeteer)
-
-```bash
-npm run test:puppeteer
-```
-
-## REST API Routing Table
-
-- `GET /health` - health check.
-- `POST /api/ask` - backward-compatible single prompt endpoint (legacy).
-- `GET /api/history` - fetch recent prompt metadata from MySQL `request_history`.
-- `GET /api/threads` - list conversation threads.
-- `POST /api/threads` - create a new conversation thread.
-- `GET /api/threads/:threadId/messages` - list messages in a thread.
-- `POST /api/threads/:threadId/messages` - append user message and generate assistant reply.
-- `POST /api/threads/:threadId/regenerate` - regenerate assistant reply for a user message.
-- `POST /api/threads/:threadId/stop` - non-streaming placeholder stop endpoint.
-
-## Database Design
-
-Tables:
-- `request_history` for legacy prompt metadata.
-- `conversation_threads` for chat thread metadata.
-- `conversation_messages` for persisted user/assistant messages with status, provider, and latency.
-
-## Assignment Report Outline
-
-Use this structure in your report document:
-
-1. User Stories and Features
-   - At least 3 user stories/features
-   - Point estimates for each feature
-   - Selected features for this iteration
-2. UI Design
-   - Number of pages
-   - User interactions and page transitions
-3. Unit Tests and Acceptance Tests
-   - Derivation of acceptance tests from use cases (Cucumber.js)
-   - Test suite design (Jasmine)
-   - Mapping use cases to unit-test-driven implementation
-4. Software Architecture and Implementation
-   - REST API design
-   - Routing table
-   - Database design
-5. Reproduction Instructions
-   - Installation
-   - Execution
-   - Unit testing
-   - Puppeteer testing
+- `conversation_threads` — chat thread metadata
+- `conversation_messages` — persisted user/assistant messages with status, provider, and latency
+- `request_history` — legacy prompt metadata
